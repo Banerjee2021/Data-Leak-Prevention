@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureGuard DLP - Data Leak Prevention Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+  /* Primitive Color Tokens */
+  --color-white: rgba(255, 255, 255, 1);
+  --color-black: rgba(0, 0, 0, 1);
+  --color-cream-50: rgba(252, 252, 249, 1);
+  --color-cream-100: rgba(255, 255, 253, 1);
+  --color-gray-200: rgba(245, 245, 245, 1);
+  --color-gray-300: rgba(167, 169, 169, 1);
+  --color-gray-400: rgba(119, 124, 124, 1);
+  --color-slate-500: rgba(98, 108, 113, 1);
+  --color-brown-600: rgba(94, 82, 64, 1);
+  --color-charcoal-700: rgba(31, 33, 33, 1);
+  --color-charcoal-800: rgba(38, 40, 40, 1);
+  --color-slate-900: rgba(19, 52, 59, 1);
+  --color-teal-300: rgba(50, 184, 198, 1);
+  --color-teal-400: rgba(45, 166, 178, 1);
+  --color-teal-500: rgba(33, 128, 141, 1);
+  --color-teal-600: rgba(29, 116, 128, 1);
+  --color-teal-700: rgba(26, 104, 115, 1);
+  --color-teal-800: rgba(41, 150, 161, 1);
+  --color-red-400: rgba(255, 84, 89, 1);
+  --color-red-500: rgba(192, 21, 47, 1);
+  --color-orange-400: rgba(230, 129, 97, 1);
+  --color-orange-500: rgba(168, 75, 47, 1);
+
+  /* RGB versions for opacity control */
+  --color-brown-600-rgb: 94, 82, 64;
+  --color-teal-500-rgb: 33, 128, 141;
+  --color-slate-900-rgb: 19, 52, 59;
+  --color-slate-500-rgb: 98, 108, 113;
+  --color-red-500-rgb: 192, 21, 47;
+  --color-red-400-rgb: 255, 84, 89;
+  --color-orange-500-rgb: 168, 75, 47;
+  --color-orange-400-rgb: 230, 129, 97;
+
+  /* Background color tokens (Light Mode) */
+  --color-bg-1: rgba(59, 130, 246, 0.08);
+  --color-bg-2: rgba(245, 158, 11, 0.08);
+  --color-bg-3: rgba(34, 197, 94, 0.08);
+  --color-bg-4: rgba(239, 68, 68, 0.08);
+  --color-bg-5: rgba(147, 51, 234, 0.08);
+  --color-bg-6: rgba(249, 115, 22, 0.08);
+  --color-bg-7: rgba(236, 72, 153, 0.08);
+  --color-bg-8: rgba(6, 182, 212, 0.08);
+
+  /* DLP Dark Theme Override */
+  --color-background: #0a0e1a;
+  --color-surface: #121829;
+  --color-surface-elevated: #1a2038;
+  --color-text: #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-primary: #0ea5e9;
+  --color-primary-hover: #0284c7;
+  --color-primary-active: #0369a1;
+  --color-accent: #06b6d4;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-critical: #dc2626;
+  --color-border: rgba(148, 163, 184, 0.1);
+  --color-border-hover: rgba(148, 163, 184, 0.2);
+
+  /* Status Colors */
+  --status-critical: #dc2626;
+  --status-high: #ea580c;
+  --status-medium: #ca8a04;
+  --status-low: #059669;
+  --status-info: #0284c7;
+
+  /* Typography */
+  --font-family-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-mono: "JetBrains Mono", "Fira Code", "Monaco", "Consolas", monospace;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 20px;
+  --font-size-3xl: 24px;
+  --font-size-4xl: 30px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 550;
+  --font-weight-bold: 600;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --letter-spacing-tight: -0.01em;
+
+  /* Spacing */
+  --space-0: 0;
+  --space-1: 1px;
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-base: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+
+  /* Animation */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Layout */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+}
+
+/* Base styles */
+html {
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+h1 { font-size: var(--font-size-4xl); }
+h2 { font-size: var(--font-size-3xl); }
+h3 { font-size: var(--font-size-2xl); }
+h4 { font-size: var(--font-size-xl); }
+h5 { font-size: var(--font-size-lg); }
+h6 { font-size: var(--font-size-md); }
+
+p {
+  margin: 0 0 var(--space-16) 0;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* Security-specific styles */
+.security-layout {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0e1a 0%, #121829 100%);
+}
+
+.navbar {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-12) var(--space-24);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.navbar-nav {
+  display: flex;
+  gap: var(--space-24);
+  align-items: center;
+}
+
+.nav-item {
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.nav-item:hover {
+  background-color: var(--color-surface-elevated);
+  color: var(--color-text);
+}
+
+.nav-item.active {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+}
+
+.sidebar {
+  width: 280px;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  padding: var(--space-24);
+  position: fixed;
+  left: 0;
+  top: 70px;
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-standard);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.sidebar-item:hover {
+  background-color: var(--color-surface-elevated);
+  color: var(--color-text);
+}
+
+.sidebar-item.active {
+  background-color: rgba(14, 165, 233, 0.1);
+  color: var(--color-primary);
+  border-left: 3px solid var(--color-primary);
+}
+
+.main-content {
+  margin-left: 280px;
+  padding: var(--space-24);
+  min-height: calc(100vh - 70px);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-24);
+  margin-bottom: var(--space-32);
+}
+
+.metric-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: var(--space-24);
+  transition: all var(--duration-normal) var(--ease-standard);
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-16);
+}
+
+.metric-title {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-primary);
+}
+
+.metric-value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-8);
+}
+
+.metric-change {
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.metric-change.positive {
+  color: var(--color-success);
+}
+
+.metric-change.negative {
+  color: var(--color-error);
+}
+
+.alert-feed {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.alert-header {
+  padding: var(--space-20);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alert-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.alert-item {
+  padding: var(--space-16) var(--space-20);
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.alert-item:hover {
+  background-color: var(--color-surface-elevated);
+}
+
+.alert-item:last-child {
+  border-bottom: none;
+}
+
+.alert-severity {
+  width: 8px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.alert-severity.critical {
+  background: var(--status-critical);
+}
+
+.alert-severity.high {
+  background: var(--status-high);
+}
+
+.alert-severity.medium {
+  background: var(--status-medium);
+}
+
+.alert-severity.low {
+  background: var(--status-low);
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+
+.alert-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  display: flex;
+  gap: var(--space-16);
+}
+
+.alert-actions {
+  display: flex;
+  gap: var(--space-8);
+  flex-shrink: 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-standard);
+  border: none;
+  text-decoration: none;
+  position: relative;
+  gap: var(--space-8);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.4);
+}
+
+.btn--primary {
+  background: var(--color-primary);
+  color: var(--color-background);
+}
+
+.btn--primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn--secondary {
+  background: var(--color-surface-elevated);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn--secondary:hover {
+  background: var(--color-border-hover);
+}
+
+.btn--danger {
+  background: var(--color-error);
+  color: white;
+}
+
+.btn--danger:hover {
+  background: var(--color-critical);
+}
+
+.btn--sm {
+  padding: var(--space-4) var(--space-12);
+  font-size: var(--font-size-xs);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.critical {
+  background: rgba(220, 38, 38, 0.15);
+  color: var(--status-critical);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+}
+
+.status-badge.high {
+  background: rgba(234, 88, 12, 0.15);
+  color: var(--status-high);
+  border: 1px solid rgba(234, 88, 12, 0.25);
+}
+
+.status-badge.medium {
+  background: rgba(202, 138, 4, 0.15);
+  color: var(--status-medium);
+  border: 1px solid rgba(202, 138, 4, 0.25);
+}
+
+.status-badge.low {
+  background: rgba(5, 150, 105, 0.15);
+  color: var(--status-low);
+  border: 1px solid rgba(5, 150, 105, 0.25);
+}
+
+.status-badge.active {
+  background: rgba(14, 165, 233, 0.15);
+  color: var(--color-primary);
+  border: 1px solid rgba(14, 165, 233, 0.25);
+}
+
+.status-badge.resolved {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.data-table {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: var(--color-surface-elevated);
+  padding: var(--space-12) var(--space-16);
+  text-align: left;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table td {
+  padding: var(--space-12) var(--space-16);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.table tr:hover {
+  background-color: var(--color-surface-elevated);
+}
+
+.chart-container {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: var(--space-24);
+  height: 300px;
+}
+
+.chart-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-16);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  max-width: 800px;
+  max-height: 90vh;
+  width: 90%;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+  padding: var(--space-24);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.modal-body {
+  padding: var(--space-24);
+}
+
+.modal-footer {
+  padding: var(--space-24);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  gap: var(--space-12);
+  justify-content: flex-end;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xl);
+  cursor: pointer;
+  padding: var(--space-4);
+  border-radius: var(--radius-sm);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.close-btn:hover {
+  color: var(--color-text);
+}
+
+.form-group {
+  margin-bottom: var(--space-16);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--space-8);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: var(--space-8) var(--space-12);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.form-control:focus {
+  border-color: var(--color-primary);
+  outline: 2px solid rgba(14, 165, 233, 0.2);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-8 {
+  gap: var(--space-8);
+}
+
+.gap-16 {
+  gap: var(--space-16);
+}
+
+.mb-16 {
+  margin-bottom: var(--space-16);
+}
+
+.mb-24 {
+  margin-bottom: var(--space-24);
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Login Screen Styles */
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0e1a 0%, #121829 50%, #0a0e1a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-24);
+}
+
+.login-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: var(--space-32);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: var(--space-32);
+}
+
+.login-logo {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--space-8);
+}
+
+.login-subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.mfa-section {
+  margin-top: var(--space-24);
+  padding: var(--space-16);
+  background: var(--color-surface-elevated);
+  border-radius: var(--radius-base);
+  border: 1px solid var(--color-border);
+}
+
+.mfa-title {
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-12);
+}
+
+.mfa-options {
+  display: flex;
+  gap: var(--space-12);
+  margin-bottom: var(--space-16);
+}
+
+.mfa-option {
+  flex: 1;
+  padding: var(--space-12);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.mfa-option:hover {
+  border-color: var(--color-primary);
+}
+
+.mfa-option.selected {
+  border-color: var(--color-primary);
+  background: rgba(14, 165, 233, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform var(--duration-normal) var(--ease-standard);
+  }
+  
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .navbar-nav {
+    display: none;
+  }
+}
+
+/* Pulse animation for live updates */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Live indicator */
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  color: var(--color-success);
+  font-size: var(--font-size-sm);
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-success);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+/* Risk score styling */
+.risk-score {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+}
+
+.risk-score.high {
+  background: rgba(220, 38, 38, 0.15);
+  color: var(--status-critical);
+  border: 2px solid rgba(220, 38, 38, 0.25);
+}
+
+.risk-score.medium {
+  background: rgba(234, 88, 12, 0.15);
+  color: var(--status-high);
+  border: 2px solid rgba(234, 88, 12, 0.25);
+}
+
+.risk-score.low {
+  background: rgba(5, 150, 105, 0.15);
+  color: var(--status-low);
+  border: 2px solid rgba(5, 150, 105, 0.25);
+}
+
+.timeline {
+  position: relative;
+  padding-left: var(--space-24);
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: var(--space-16);
+  padding: var(--space-12);
+  background: var(--color-surface-elevated);
+  border-radius: var(--radius-base);
+  border: 1px solid var(--color-border);
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 16px;
+  width: 8px;
+  height: 8px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  border: 2px solid var(--color-surface);
+}
+
+.timeline-time {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.timeline-event {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+
+.timeline-user {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+    </style>
+</head>
+<body>
+    <div class="security-layout">
+        <!-- Login Screen -->
+        <div id="login-screen" class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-logo">🛡️ SecureGuard DLP</div>
+                    <div class="login-subtitle">Data Leak Prevention Portal</div>
+                </div>
+                
+                <form id="login-form">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="admin@company.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <div class="mfa-section" id="mfa-section" style="display: none;">
+                        <h5 class="mfa-title">Multi-Factor Authentication</h5>
+                        <div class="mfa-options">
+                            <div class="mfa-option" data-mfa="sms">📱 SMS</div>
+                            <div class="mfa-option selected" data-mfa="app">📲 App</div>
+                            <div class="mfa-option" data-mfa="email">📧 Email</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="mfa-code">Verification Code</label>
+                            <input type="text" id="mfa-code" class="form-control" placeholder="Enter 6-digit code" maxlength="6">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn--primary" style="width: 100%; margin-top: 16px;">
+                        Sign In
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Application -->
+        <div id="app-screen" class="hidden">
+            <!-- Navigation -->
+            <nav class="navbar">
+                <div class="navbar-brand">
+                    <span>🛡️</span>
+                    <span>SecureGuard DLP</span>
+                    <div class="live-indicator">
+                        <span class="live-dot"></span>
+                        <span>Live</span>
+                    </div>
+                </div>
+                
+                <div class="navbar-nav">
+                    <div class="nav-item">🔔 Alerts (9)</div>
+                    <div class="nav-item">⚙️ Settings</div>
+                    <div class="nav-item" onclick="logout()">🚪 Logout</div>
+                </div>
+            </nav>
+
+            <div class="flex">
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <nav class="sidebar-menu">
+                        <div class="sidebar-item active" onclick="showScreen('dashboard')">📊 Dashboard</div>
+                        <div class="sidebar-item" onclick="showScreen('monitoring')">👁️ Live Monitoring</div>
+                        <div class="sidebar-item" onclick="showScreen('alerts')">🚨 Alert Management</div>
+                        <div class="sidebar-item" onclick="showScreen('incidents')">🔍 Incident Response</div>
+                        <div class="sidebar-item" onclick="showScreen('policies')">📋 Policy Management</div>
+                        <div class="sidebar-item" onclick="showScreen('users')">👥 User Profiles</div>
+                        <div class="sidebar-item" onclick="showScreen('analytics')">📈 Analytics</div>
+                        <div class="sidebar-item" onclick="showScreen('compliance')">✅ Compliance</div>
+                        <div class="sidebar-item" onclick="showScreen('data-discovery')">🔎 Data Discovery</div>
+                    </nav>
+                </aside>
+
+                <!-- Main Content -->
+                <main class="main-content">
+                    <!-- Dashboard Screen -->
+                    <div id="dashboard" class="screen">
+                        <h2 class="mb-24">Security Operations Dashboard</h2>
+                        
+                        <!-- Metrics Grid -->
+                        <div class="dashboard-grid">
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <div class="metric-title">Active Threats</div>
+                                    <div class="metric-icon">⚠️</div>
+                                </div>
+                                <div class="metric-value" id="active-threats">9</div>
+                                <div class="metric-change positive">↓ 3 from yesterday</div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <div class="metric-title">Incidents Resolved</div>
+                                    <div class="metric-icon">✅</div>
+                                </div>
+                                <div class="metric-value" id="incidents-resolved">38</div>
+                                <div class="metric-change positive">↑ 12 from yesterday</div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <div class="metric-title">Data Protected (GB)</div>
+                                    <div class="metric-icon">🛡️</div>
+                                </div>
+                                <div class="metric-value" id="data-protected">2,847</div>
+                                <div class="metric-change positive">↑ 245 GB today</div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <div class="metric-title">Compliance Score</div>
+                                    <div class="metric-icon">📊</div>
+                                </div>
+                                <div class="metric-value" id="compliance-score">96%</div>
+                                <div class="metric-change positive">↑ 2% this week</div>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                            <!-- Real-time Alert Feed -->
+                            <div class="alert-feed">
+                                <div class="alert-header">
+                                    <h3>Live Alert Feed</h3>
+                                    <div class="live-indicator">
+                                        <span class="live-dot"></span>
+                                        <span>Real-time</span>
+                                    </div>
+                                </div>
+                                <div class="alert-list" id="alert-list">
+                                    <!-- Alerts will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Actions -->
+                            <div class="metric-card">
+                                <h4 class="mb-16">Quick Response Actions</h4>
+                                <div class="flex flex-col gap-8">
+                                    <button class="btn btn--danger btn--sm" onclick="emergencyLockdown()">🚫 Emergency Lockdown</button>
+                                    <button class="btn btn--primary btn--sm" onclick="showScreen('policies')">📋 Update Policies</button>
+                                    <button class="btn btn--secondary btn--sm" onclick="generateReport()">📊 Generate Report</button>
+                                    <button class="btn btn--secondary btn--sm" onclick="showScreen('users')">👥 Review High-Risk Users</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Monitoring Screen -->
+                    <div id="monitoring" class="screen hidden">
+                        <div class="flex justify-between items-center mb-24">
+                            <h2>Live Data Flow Monitoring</h2>
+                            <div class="live-indicator">
+                                <span class="live-dot"></span>
+                                <span>Monitoring 2,450 endpoints</span>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                            <div class="chart-container">
+                                <h4 class="chart-title">Data Flow by Channel</h4>
+                                <canvas id="flow-chart" width="400" height="200"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <h4 class="chart-title">Risk Level Distribution</h4>
+                                <canvas id="risk-chart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="data-table">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>User</th>
+                                        <th>Data Type</th>
+                                        <th>Source</th>
+                                        <th>Destination</th>
+                                        <th>Risk Score</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="monitoring-table">
+                                    <!-- Populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Alert Management Screen -->
+                    <div id="alerts" class="screen hidden">
+                        <h2 class="mb-24">Alert Management Center</h2>
+                        
+                        <div class="flex gap-16 mb-24">
+                            <button class="btn btn--secondary btn--sm" onclick="filterAlerts('all')">All Alerts</button>
+                            <button class="btn btn--secondary btn--sm" onclick="filterAlerts('critical')">Critical</button>
+                            <button class="btn btn--secondary btn--sm" onclick="filterAlerts('high')">High</button>
+                            <button class="btn btn--secondary btn--sm" onclick="filterAlerts('active')">Active</button>
+                        </div>
+                        
+                        <div class="data-table">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Severity</th>
+                                        <th>Type</th>
+                                        <th>User</th>
+                                        <th>Department</th>
+                                        <th>Risk Score</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="alerts-table">
+                                    <!-- Populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Incident Response Screen -->
+                    <div id="incidents" class="screen hidden">
+                        <h2 class="mb-24">Incident Response Center</h2>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                            <div class="metric-card">
+                                <h4 class="mb-16">Active Investigations</h4>
+                                <div id="active-investigations">
+                                    <!-- Populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <h4 class="mb-16">Response Playbooks</h4>
+                                <div class="flex flex-col gap-8">
+                                    <button class="btn btn--secondary btn--sm">📋 Data Exfiltration Response</button>
+                                    <button class="btn btn--secondary btn--sm">🔍 Insider Threat Investigation</button>
+                                    <button class="btn btn--secondary btn--sm">🚫 Malware Incident Response</button>
+                                    <button class="btn btn--secondary btn--sm">📊 Compliance Breach Protocol</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Policy Management Screen -->
+                    <div id="policies" class="screen hidden">
+                        <h2 class="mb-24">Policy Management Console</h2>
+                        
+                        <div class="flex justify-between items-center mb-24">
+                            <div class="flex gap-16">
+                                <button class="btn btn--primary btn--sm" onclick="createPolicy()">+ Create Policy</button>
+                                <button class="btn btn--secondary btn--sm">📥 Import Template</button>
+                            </div>
+                        </div>
+                        
+                        <div class="data-table">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Policy Name</th>
+                                        <th>Status</th>
+                                        <th>Coverage</th>
+                                        <th>Rules</th>
+                                        <th>Violations (30d)</th>
+                                        <th>Effectiveness</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="policies-table">
+                                    <!-- Populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- User Profiles Screen -->
+                    <div id="users" class="screen hidden">
+                        <h2 class="mb-24">User Risk Profiles</h2>
+                        
+                        <div class="flex gap-16 mb-24">
+                            <button class="btn btn--secondary btn--sm" onclick="filterUsers('all')">All Users</button>
+                            <button class="btn btn--secondary btn--sm" onclick="filterUsers('high-risk')">High Risk</button>
+                            <button class="btn btn--secondary btn--sm" onclick="filterUsers('recent-violations')">Recent Violations</button>
+                        </div>
+                        
+                        <div class="data-table">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Department</th>
+                                        <th>Role</th>
+                                        <th>Risk Score</th>
+                                        <th>Violations</th>
+                                        <th>Last Incident</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table">
+                                    <!-- Populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Screen -->
+                    <div id="analytics" class="screen hidden">
+                        <h2 class="mb-24">Security Analytics &amp; Reports</h2>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                            <div class="chart-container">
+                                <h4 class="chart-title">Incidents Over Time</h4>
+                                <canvas id="incidents-chart" width="400" height="200"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <h4 class="chart-title">Data Types at Risk</h4>
+                                <canvas id="data-types-chart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                            <div class="chart-container">
+                                <h4 class="chart-title">Policy Effectiveness</h4>
+                                <canvas id="policy-chart" width="400" height="200"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <h4 class="chart-title">Response Time Trends</h4>
+                                <canvas id="response-chart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Compliance Screen -->
+                    <div id="compliance" class="screen hidden">
+                        <h2 class="mb-24">Compliance Dashboard</h2>
+                        
+                        <div class="dashboard-grid mb-24">
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <div class="metric-title">GDPR Compliance</div>
+                                    <div class="metric-icon">🇪🇺</div>
+                                </div>
+                                <div class="metric-value">98%</div>
+                                <div class="status-badge resolved">Compliant</div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <div class="metric-title">HIPAA Compliance</div>
+                                    <div class="metric-icon">🏥</div>
+                                </div>
+                                <div class="metric-value">96%</div>
+                                <div class="status-badge resolved">Compliant</div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <div class="metric-title">PCI-DSS Compliance</div>
+                                    <div class="metric-icon">💳</div>
+                                </div>
+                                <div class="metric-value">94%</div>
+                                <div class="status-badge resolved">Compliant</div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <div class="metric-title">SOX Compliance</div>
+                                    <div class="metric-icon">📊</div>
+                                </div>
+                                <div class="metric-value">89%</div>
+                                <div class="status-badge medium">Attention Required</div>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <h4 class="chart-title">Compliance Score Trends</h4>
+                            <canvas id="compliance-chart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Data Discovery Screen -->
+                    <div id="data-discovery" class="screen hidden">
+                        <h2 class="mb-24">Data Discovery &amp; Classification</h2>
+                        
+                        <div class="flex justify-between items-center mb-24">
+                            <div class="flex gap-16">
+                                <button class="btn btn--primary btn--sm" onclick="startDataScan()">🔍 Start Discovery Scan</button>
+                                <button class="btn btn--secondary btn--sm">📊 View Classification Rules</button>
+                            </div>
+                            <div class="status-badge active">Last scan: 2 hours ago</div>
+                        </div>
+                        
+                        <div class="dashboard-grid mb-24">
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <div class="metric-title">PII Records</div>
+                                    <div class="metric-icon">👤</div>
+                                </div>
+                                <div class="metric-value">1.2M</div>
+                                <div class="metric-change positive">Protected</div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <div class="metric-title">Financial Data</div>
+                                    <div class="metric-icon">💳</div>
+                                </div>
+                                <div class="metric-value">890K</div>
+                                <div class="metric-change positive">Protected</div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <div class="metric-title">Intellectual Property</div>
+                                    <div class="metric-icon">🧠</div>
+                                </div>
+                                <div class="metric-value">125K</div>
+                                <div class="metric-change positive">Protected</div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-header">
+                                    <div class="metric-title">Confidential Data</div>
+                                    <div class="metric-icon">🔒</div>
+                                </div>
+                                <div class="metric-value">2.5M</div>
+                                <div class="metric-change positive">Protected</div>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <h4 class="chart-title">Data Classification Distribution</h4>
+                            <canvas id="classification-chart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- Incident Detail Modal -->
+        <div id="incident-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Incident Details</h3>
+                    <button class="close-btn" onclick="closeModal('incident-modal')">×</button>
+                </div>
+                <div class="modal-body" id="incident-details">
+                    <!-- Populated by JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--danger" onclick="blockTransfer()">🚫 Block Transfer</button>
+                    <button class="btn btn--secondary" onclick="quarantineFile()">📦 Quarantine</button>
+                    <button class="btn btn--secondary" onclick="notifyUser()">📧 Notify User</button>
+                    <button class="btn btn--secondary" onclick="closeModal('incident-modal')">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Policy Creation Modal -->
+        <div id="policy-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Create New Policy</h3>
+                    <button class="close-btn" onclick="closeModal('policy-modal')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="policy-name">Policy Name</label>
+                        <input type="text" id="policy-name" class="form-control" placeholder="Enter policy name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="policy-type">Policy Type</label>
+                        <select id="policy-type" class="form-control">
+                            <option>Data Loss Prevention</option>
+                            <option>Compliance (GDPR)</option>
+                            <option>Compliance (HIPAA)</option>
+                            <option>Intellectual Property Protection</option>
+                            <option>Financial Data Protection</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="policy-scope">Coverage Scope</label>
+                        <select id="policy-scope" class="form-control">
+                            <option>All Channels</option>
+                            <option>Email Only</option>
+                            <option>USB/Removable Media</option>
+                            <option>Cloud Storage</option>
+                            <option>Network File Transfer</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--primary" onclick="savePolicy()">Create Policy</button>
+                    <button class="btn btn--secondary" onclick="closeModal('policy-modal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let currentUser = null;
+        let currentScreen = 'dashboard';
+        let isLoggedIn = false;
+        let simulationInterval = null;
+        
+        // Sample Data
+        const sampleAlerts = [
+            {
+                id: 1,
+                timestamp: "2025-10-22 10:45:23",
+                severity: "Critical",
+                type: "Email Data Exfiltration",
+                user: "john.mitchell@company.com",
+                department: "Sales",
+                description: "Attempted to email customer database to personal Gmail account",
+                dataType: "Customer PII",
+                volume: "2,450 records",
+                policyViolated: "PII Protection Policy",
+                status: "Active",
+                riskScore: 95,
+                source: "Outlook Email",
+                destination: "john.personal@gmail.com",
+                actionTaken: "Blocked"
+            },
+            {
+                id: 2,
+                timestamp: "2025-10-22 10:32:15",
+                severity: "High",
+                type: "USB Data Copy",
+                user: "sarah.chen@company.com",
+                department: "Engineering",
+                description: "Copied 150 source code files to USB drive",
+                dataType: "Intellectual Property",
+                volume: "450 MB",
+                policyViolated: "IP Protection Policy",
+                status: "Under Investigation",
+                riskScore: 88,
+                source: "Workstation ENGI-042",
+                destination: "USB Drive (SanDisk 32GB)",
+                actionTaken: "Quarantined"
+            },
+            {
+                id: 3,
+                timestamp: "2025-10-22 10:18:47",
+                severity: "Medium",
+                type: "Cloud Upload",
+                user: "mike.rodriguez@company.com",
+                department: "Finance",
+                description: "Uploaded financial reports to personal Dropbox",
+                dataType: "Financial Data",
+                volume: "15 documents",
+                policyViolated: "Financial Data Policy",
+                status: "Pending Review",
+                riskScore: 72,
+                source: "Finance-PC-089",
+                destination: "Dropbox Personal Account",
+                actionTaken: "User Notified"
+            },
+            {
+                id: 4,
+                timestamp: "2025-10-22 09:55:12",
+                severity: "Low",
+                type: "Screenshot Capture",
+                user: "lisa.thompson@company.com",
+                department: "HR",
+                description: "Captured screenshot of employee salary spreadsheet",
+                dataType: "HR Confidential",
+                volume: "1 image",
+                policyViolated: "HR Data Policy",
+                status: "Resolved",
+                riskScore: 45,
+                source: "HR-LAPTOP-15",
+                destination: "Local Desktop",
+                actionTaken: "Logged"
+            },
+            {
+                id: 5,
+                timestamp: "2025-10-22 09:22:38",
+                severity: "Critical",
+                type: "Bulk Download",
+                user: "david.kumar@company.com",
+                department: "IT",
+                description: "Downloaded entire customer database after hours",
+                dataType: "Customer PII + Financial",
+                volume: "10,000 records",
+                policyViolated: "After-Hours Access Policy",
+                status: "Active",
+                riskScore: 98,
+                source: "Database Server",
+                destination: "IT-ADMIN-PC-003",
+                actionTaken: "Account Suspended"
+            }
+        ];
+        
+        const policies = [
+            {
+                id: 1,
+                name: "PII Protection Policy",
+                status: "Active",
+                created: "2025-01-15",
+                coverage: "Email, Cloud, USB, Web",
+                rules: 12,
+                violationsLastMonth: 45,
+                effectiveness: "94%"
+            },
+            {
+                id: 2,
+                name: "Financial Data Policy",
+                status: "Active",
+                created: "2024-11-20",
+                coverage: "All Channels",
+                rules: 18,
+                violationsLastMonth: 23,
+                effectiveness: "97%"
+            },
+            {
+                id: 3,
+                name: "IP Protection Policy",
+                status: "Active",
+                created: "2025-03-10",
+                coverage: "Endpoint, Network",
+                rules: 15,
+                violationsLastMonth: 31,
+                effectiveness: "91%"
+            },
+            {
+                id: 4,
+                name: "GDPR Compliance Policy",
+                status: "Active",
+                created: "2024-09-01",
+                coverage: "All Channels",
+                rules: 25,
+                violationsLastMonth: 12,
+                effectiveness: "98%"
+            }
+        ];
+        
+        const userProfiles = [
+            {
+                name: "John Mitchell",
+                email: "john.mitchell@company.com",
+                department: "Sales",
+                role: "Sales Manager",
+                riskScore: 85,
+                violationsCount: 7,
+                lastIncident: "2025-10-22 10:45:23",
+                behavior: "Concerning - Multiple external data transfers"
+            },
+            {
+                name: "Sarah Chen",
+                email: "sarah.chen@company.com",
+                department: "Engineering",
+                role: "Senior Developer",
+                riskScore: 72,
+                violationsCount: 3,
+                lastIncident: "2025-10-22 10:32:15",
+                behavior: "Elevated - Recent USB usage spike"
+            },
+            {
+                name: "Lisa Thompson",
+                email: "lisa.thompson@company.com",
+                department: "HR",
+                role: "HR Specialist",
+                riskScore: 28,
+                violationsCount: 1,
+                lastIncident: "2025-10-22 09:55:12",
+                behavior: "Normal - Within expected patterns"
+            }
+        ];
+        
+        // Authentication Functions
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (email && password) {
+                // Simulate MFA requirement
+                document.getElementById('mfa-section').style.display = 'block';
+                document.querySelector('button[type="submit"]').textContent = 'Verify &amp; Sign In';
+                
+                // Auto-fill MFA code for demo
+                setTimeout(() => {
+                    document.getElementById('mfa-code').value = '123456';
+                }, 1000);
+                
+                // Complete login after MFA
+                setTimeout(() => {
+                    login(email);
+                }, 2000);
+            }
+        }
+        
+        function login(email) {
+            currentUser = { email };
+            isLoggedIn = true;
+            
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            
+            // Initialize dashboard
+            initializeDashboard();
+            startRealTimeSimulation();
+        }
+        
+        function logout() {
+            currentUser = null;
+            isLoggedIn = false;
+            
+            // Stop real-time simulation
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+                simulationInterval = null;
+            }
+            
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('app-screen').classList.add('hidden');
+            
+            // Reset form
+            document.getElementById('login-form').reset();
+            document.getElementById('mfa-section').style.display = 'none';
+            document.querySelector('button[type="submit"]').textContent = 'Sign In';
+        }
+        
+        // Navigation Functions
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.add('hidden');
+            });
+            
+            // Remove active class from all sidebar items
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected screen
+            document.getElementById(screenId).classList.remove('hidden');
+            
+            // Add active class to selected sidebar item
+            event.target.classList.add('active');
+            
+            currentScreen = screenId;
+            
+            // Initialize screen-specific content
+            initializeScreen(screenId);
+        }
+        
+        function initializeScreen(screenId) {
+            switch (screenId) {
+                case 'monitoring':
+                    initializeMonitoring();
+                    break;
+                case 'alerts':
+                    initializeAlerts();
+                    break;
+                case 'policies':
+                    initializePolicies();
+                    break;
+                case 'users':
+                    initializeUsers();
+                    break;
+                case 'analytics':
+                    initializeAnalytics();
+                    break;
+                case 'compliance':
+                    initializeCompliance();
+                    break;
+                case 'data-discovery':
+                    initializeDataDiscovery();
+                    break;
+                case 'incidents':
+                    initializeIncidents();
+                    break;
+            }
+        }
+        
+        // Dashboard Initialization
+        function initializeDashboard() {
+            populateAlertFeed();
+            updateMetrics();
+        }
+        
+        function populateAlertFeed() {
+            const alertList = document.getElementById('alert-list');
+            if (!alertList) return;
+            
+            alertList.innerHTML = '';
+            
+            sampleAlerts.forEach(alert => {
+                const alertElement = createAlertElement(alert);
+                alertList.appendChild(alertElement);
+            });
+        }
+        
+        function createAlertElement(alert) {
+            const div = document.createElement('div');
+            div.className = 'alert-item';
+            div.onclick = () => showIncidentDetails(alert);
+            
+            div.innerHTML = `
+                <div class="alert-severity ${alert.severity.toLowerCase()}"></div>
+                <div class="alert-content">
+                    <div class="alert-title">${alert.type} - ${alert.user}</div>
+                    <div class="alert-meta">
+                        <span>📅 ${alert.timestamp}</span>
+                        <span>🏢 ${alert.department}</span>
+                        <span>⚠️ Risk: ${alert.riskScore}</span>
+                    </div>
+                </div>
+                <div class="alert-actions">
+                    <span class="status-badge ${alert.status.toLowerCase().replace(' ', '-')}">${alert.status}</span>
+                </div>
+            `;
+            
+            return div;
+        }
+        
+        function updateMetrics() {
+            // Simulate real-time metric updates
+            const metrics = {
+                activeThreats: Math.floor(Math.random() * 5) + 7,
+                incidentsResolved: Math.floor(Math.random() * 10) + 35,
+                dataProtected: Math.floor(Math.random() * 100) + 2800,
+                complianceScore: Math.floor(Math.random() * 3) + 94
+            };
+            
+            document.getElementById('active-threats').textContent = metrics.activeThreats;
+            document.getElementById('incidents-resolved').textContent = metrics.incidentsResolved;
+            document.getElementById('data-protected').textContent = metrics.dataProtected.toLocaleString();
+            document.getElementById('compliance-score').textContent = metrics.complianceScore + '%';
+        }
+        
+        // Real-time Simulation
+        function startRealTimeSimulation() {
+            simulationInterval = setInterval(() => {
+                updateMetrics();
+                
+                // Randomly add new alerts
+                if (Math.random() < 0.1) {
+                    addNewAlert();
+                }
+                
+                // Update monitoring table if visible
+                if (currentScreen === 'monitoring') {
+                    updateMonitoringTable();
+                }
+            }, 3000);
+        }
+        
+        function addNewAlert() {
+            const newTypes = ['Print Job', 'Web Upload', 'Network Transfer', 'File Access'];
+            const newAlert = {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString(),
+                severity: ['Critical', 'High', 'Medium', 'Low'][Math.floor(Math.random() * 4)],
+                type: newTypes[Math.floor(Math.random() * newTypes.length)],
+                user: `user${Math.floor(Math.random() * 100)}@company.com`,
+                department: ['IT', 'Sales', 'Finance', 'HR'][Math.floor(Math.random() * 4)],
+                description: "Real-time detected activity",
+                status: "Active",
+                riskScore: Math.floor(Math.random() * 40) + 60
+            };
+            
+            sampleAlerts.unshift(newAlert);
+            if (sampleAlerts.length > 10) {
+                sampleAlerts.pop();
+            }
+            
+            if (currentScreen === 'dashboard') {
+                populateAlertFeed();
+            }
+        }
+        
+        // Modal Functions
+        function showIncidentDetails(alert) {
+            const modal = document.getElementById('incident-modal');
+            const detailsDiv = document.getElementById('incident-details');
+            
+            detailsDiv.innerHTML = `
+                <div class="flex gap-16 mb-24">
+                    <div class="flex-1">
+                        <h4>Incident Overview</h4>
+                        <div class="metric-card">
+                            <div class="flex justify-between items-center mb-16">
+                                <span class="status-badge ${alert.severity.toLowerCase()}">${alert.severity}</span>
+                                <div class="risk-score ${alert.riskScore > 80 ? 'high' : alert.riskScore > 60 ? 'medium' : 'low'}">
+                                    ${alert.riskScore}
+                                </div>
+                            </div>
+                            <p><strong>Type:</strong> ${alert.type}</p>
+                            <p><strong>User:</strong> ${alert.user}</p>
+                            <p><strong>Department:</strong> ${alert.department}</p>
+                            <p><strong>Data Type:</strong> ${alert.dataType}</p>
+                            <p><strong>Volume:</strong> ${alert.volume}</p>
+                            <p><strong>Policy Violated:</strong> ${alert.policyViolated}</p>
+                            <p><strong>Source:</strong> ${alert.source}</p>
+                            <p><strong>Destination:</strong> ${alert.destination}</p>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h4>Event Timeline</h4>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-time">10:45:20</div>
+                                <div class="timeline-event">Email composition started</div>
+                                <div class="timeline-user">${alert.user}</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-time">10:45:22</div>
+                                <div class="timeline-event">Sensitive data attached</div>
+                                <div class="timeline-user">${alert.user}</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-time">10:45:23</div>
+                                <div class="timeline-event">External recipient detected</div>
+                                <div class="timeline-user">System</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-time">10:45:23</div>
+                                <div class="timeline-event">DLP Policy triggered</div>
+                                <div class="timeline-user">System</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // Screen Initialization Functions
+        function initializeMonitoring() {
+            updateMonitoringTable();
+            initializeFlowChart();
+            initializeRiskChart();
+        }
+        
+        function updateMonitoringTable() {
+            const table = document.getElementById('monitoring-table');
+            if (!table) return;
+            
+            const activities = [
+                { time: '10:47:23', user: 'alice.doe@company.com', dataType: 'PII', source: 'CRM System', destination: 'Excel Export', risk: 65, status: 'Allowed' },
+                { time: '10:47:15', user: 'bob.smith@company.com', dataType: 'Financial', source: 'Database', destination: 'Email Draft', risk: 85, status: 'Blocked' },
+                { time: '10:47:08', user: 'charlie.brown@company.com', dataType: 'IP', source: 'Git Repository', destination: 'USB Drive', risk: 92, status: 'Quarantined' },
+                { time: '10:46:55', user: 'diana.wilson@company.com', dataType: 'HR Data', source: 'HR Portal', destination: 'Print Queue', risk: 45, status: 'Logged' },
+                { time: '10:46:42', user: 'eve.johnson@company.com', dataType: 'Customer Data', source: 'Sales CRM', destination: 'Cloud Sync', risk: 78, status: 'Encrypted' }
+            ];
+            
+            table.innerHTML = activities.map(activity => `
+                <tr>
+                    <td style="font-family: var(--font-family-mono);">${activity.time}</td>
+                    <td>${activity.user}</td>
+                    <td><span class="status-badge info">${activity.dataType}</span></td>
+                    <td>${activity.source}</td>
+                    <td>${activity.destination}</td>
+                    <td>
+                        <div class="risk-score ${activity.risk > 80 ? 'high' : activity.risk > 60 ? 'medium' : 'low'}">
+                            ${activity.risk}
+                        </div>
+                    </td>
+                    <td><span class="status-badge ${activity.status.toLowerCase()}">${activity.status}</span></td>
+                </tr>
+            `).join('');
+        }
+        
+        function initializeFlowChart() {
+            const ctx = document.getElementById('flow-chart');
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Email', 'USB', 'Cloud', 'Network', 'Print'],
+                    datasets: [{
+                        data: [35, 20, 25, 15, 5],
+                        backgroundColor: ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5', '#5D878F']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#e2e8f0'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function initializeRiskChart() {
+            const ctx = document.getElementById('risk-chart');
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Critical', 'High', 'Medium', 'Low'],
+                    datasets: [{
+                        label: 'Risk Distribution',
+                        data: [12, 28, 45, 15],
+                        backgroundColor: ['#dc2626', '#ea580c', '#ca8a04', '#059669']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                color: '#e2e8f0'
+                            },
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#e2e8f0'
+                            },
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function initializeAlerts() {
+            const table = document.getElementById('alerts-table');
+            if (!table) return;
+            
+            table.innerHTML = sampleAlerts.map(alert => `
+                <tr onclick="showIncidentDetails(${JSON.stringify(alert).replace(/"/g, '&quot;')})">
+                    <td><span class="status-badge ${alert.severity.toLowerCase()}">${alert.severity}</span></td>
+                    <td>${alert.type}</td>
+                    <td>${alert.user}</td>
+                    <td>${alert.department}</td>
+                    <td>
+                        <div class="risk-score ${alert.riskScore > 80 ? 'high' : alert.riskScore > 60 ? 'medium' : 'low'}">
+                            ${alert.riskScore}
+                        </div>
+                    </td>
+                    <td><span class="status-badge ${alert.status.toLowerCase().replace(' ', '-')}">${alert.status}</span></td>
+                    <td>
+                        <button class="btn btn--danger btn--sm" onclick="event.stopPropagation(); blockTransfer()">Block</button>
+                        <button class="btn btn--secondary btn--sm" onclick="event.stopPropagation(); quarantineFile()">Quarantine</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function initializePolicies() {
+            const table = document.getElementById('policies-table');
+            if (!table) return;
+            
+            table.innerHTML = policies.map(policy => `
+                <tr>
+                    <td><strong>${policy.name}</strong></td>
+                    <td><span class="status-badge active">${policy.status}</span></td>
+                    <td>${policy.coverage}</td>
+                    <td>${policy.rules}</td>
+                    <td>${policy.violationsLastMonth}</td>
+                    <td><span class="status-badge resolved">${policy.effectiveness}</span></td>
+                    <td>
+                        <button class="btn btn--secondary btn--sm">Edit</button>
+                        <button class="btn btn--danger btn--sm">Disable</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function initializeUsers() {
+            const table = document.getElementById('users-table');
+            if (!table) return;
+            
+            table.innerHTML = userProfiles.map(user => `
+                <tr>
+                    <td><strong>${user.name}</strong><br><small>${user.email}</small></td>
+                    <td>${user.department}</td>
+                    <td>${user.role}</td>
+                    <td>
+                        <div class="risk-score ${user.riskScore > 80 ? 'high' : user.riskScore > 60 ? 'medium' : 'low'}">
+                            ${user.riskScore}
+                        </div>
+                    </td>
+                    <td>${user.violationsCount}</td>
+                    <td style="font-family: var(--font-family-mono); font-size: var(--font-size-xs);">${user.lastIncident}</td>
+                    <td>
+                        <button class="btn btn--secondary btn--sm">View Profile</button>
+                        <button class="btn btn--danger btn--sm">Suspend</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function initializeAnalytics() {
+            setTimeout(() => {
+                initializeIncidentsChart();
+                initializeDataTypesChart();
+                initializePolicyChart();
+                initializeResponseChart();
+            }, 100);
+        }
+        
+        function initializeIncidentsChart() {
+            const ctx = document.getElementById('incidents-chart');
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Incidents',
+                        data: [65, 59, 80, 81, 56, 55],
+                        borderColor: '#1FB8CD',
+                        backgroundColor: 'rgba(31, 184, 205, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e2e8f0'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#e2e8f0' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#e2e8f0' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function initializeDataTypesChart() {
+            const ctx = document.getElementById('data-types-chart');
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['PII', 'Financial', 'IP', 'HR Data', 'Business'],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 10],
+                        backgroundColor: ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5', '#5D878F']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#e2e8f0' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function initializePolicyChart() {
+            const ctx = document.getElementById('policy-chart');
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['PII Policy', 'Financial Policy', 'IP Policy', 'GDPR Policy'],
+                    datasets: [{
+                        label: 'Effectiveness %',
+                        data: [94, 97, 91, 98],
+                        backgroundColor: ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#e2e8f0' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                            min: 80
+                        },
+                        x: {
+                            ticks: { color: '#e2e8f0' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function initializeResponseChart() {
+            const ctx = document.getElementById('response-chart');
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [{
+                        label: 'Avg Response Time (min)',
+                        data: [6.2, 5.8, 4.9, 4.5],
+                        borderColor: '#059669',
+                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e2e8f0' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#e2e8f0' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#e2e8f0' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function initializeCompliance() {
+            setTimeout(() => {
+                initializeComplianceChart();
+            }, 100);
+        }
+        
+        function initializeComplianceChart() {
+            const ctx = document.getElementById('compliance-chart');
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    datasets: [
+                        {
+                            label: 'GDPR',
+                            data: [95, 96, 97, 98],
+                            borderColor: '#1FB8CD',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'HIPAA',
+                            data: [92, 94, 95, 96],
+                            borderColor: '#FFC185',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'PCI-DSS',
+                            data: [90, 92, 93, 94],
+                            borderColor: '#B4413C',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'SOX',
+                            data: [88, 87, 88, 89],
+                            borderColor: '#5D878F',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e2e8f0' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#e2e8f0' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                            min: 80
+                        },
+                        x: {
+                            ticks: { color: '#e2e8f0' },
+                            grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function initializeDataDiscovery() {
+            setTimeout(() => {
+                initializeClassificationChart();
+            }, 100);
+        }
+        
+        function initializeClassificationChart() {
+            const ctx = document.getElementById('classification-chart');
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['PII (1.2M)', 'Financial (890K)', 'IP (125K)', 'Confidential (2.5M)', 'Public (5.2M)'],
+                    datasets: [{
+                        data: [1200000, 890000, 125000, 2500000, 5200000],
+                        backgroundColor: ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5', '#5D878F']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#e2e8f0' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function initializeIncidents() {
+            const container = document.getElementById('active-investigations');
+            if (!container) return;
+            
+            const investigations = [
+                { id: 'INV-001', title: 'Email Exfiltration - John Mitchell', priority: 'Critical', assigned: 'Security Team Alpha' },
+                { id: 'INV-002', title: 'USB Data Copy - Sarah Chen', priority: 'High', assigned: 'Security Team Beta' },
+                { id: 'INV-003', title: 'Bulk Download - David Kumar', priority: 'Critical', assigned: 'Security Team Alpha' }
+            ];
+            
+            container.innerHTML = investigations.map(inv => `
+                <div class="alert-item" style="margin-bottom: 12px; padding: 12px; border-radius: 8px; background: var(--color-surface-elevated); border: 1px solid var(--color-border);">
+                    <div class="alert-severity ${inv.priority.toLowerCase()}"></div>
+                    <div class="alert-content">
+                        <div class="alert-title">${inv.id}: ${inv.title}</div>
+                        <div class="alert-meta">
+                            <span>👥 ${inv.assigned}</span>
+                            <span class="status-badge ${inv.priority.toLowerCase()}">${inv.priority}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Action Functions
+        function blockTransfer() {
+            alert('🚫 Transfer blocked successfully!\n\nThe data transfer has been immediately stopped and quarantined for review.');
+        }
+        
+        function quarantineFile() {
+            alert('📦 File quarantined successfully!\n\nThe file has been moved to a secure quarantine zone for investigation.');
+        }
+        
+        function notifyUser() {
+            alert('📧 User notification sent!\n\nThe user and their manager have been notified of the policy violation.');
+        }
+        
+        function emergencyLockdown() {
+            alert('🚫 Emergency Lockdown Activated!\n\nAll data transfers have been temporarily suspended across the network.');
+        }
+        
+        function generateReport() {
+            alert('📊 Report Generated!\n\nExecutive security summary has been generated and sent to management.');
+        }
+        
+        function startDataScan() {
+            alert('🔍 Data Discovery Scan Started!\n\nScanning 2,450 endpoints for sensitive data classification.');
+        }
+        
+        function createPolicy() {
+            document.getElementById('policy-modal').classList.add('active');
+        }
+        
+        function savePolicy() {
+            const name = document.getElementById('policy-name').value;
+            const type = document.getElementById('policy-type').value;
+            const scope = document.getElementById('policy-scope').value;
+            
+            if (name && type && scope) {
+                alert(`✅ Policy Created Successfully!\n\nPolicy "${name}" has been created and is now active.`);
+                closeModal('policy-modal');
+                document.getElementById('policy-name').value = '';
+            } else {
+                alert('⚠️ Please fill in all required fields.');
+            }
+        }
+        
+        // Filter Functions
+        function filterAlerts(filter) {
+            // Update button states
+            document.querySelectorAll('#alerts .btn--secondary').forEach(btn => {
+                btn.classList.remove('btn--primary');
+                btn.classList.add('btn--secondary');
+            });
+            event.target.classList.remove('btn--secondary');
+            event.target.classList.add('btn--primary');
+            
+            // Filter logic would go here
+            console.log('Filtering alerts by:', filter);
+        }
+        
+        function filterUsers(filter) {
+            // Update button states
+            document.querySelectorAll('#users .btn--secondary').forEach(btn => {
+                btn.classList.remove('btn--primary');
+                btn.classList.add('btn--secondary');
+            });
+            event.target.classList.remove('btn--secondary');
+            event.target.classList.add('btn--primary');
+            
+            // Filter logic would go here
+            console.log('Filtering users by:', filter);
+        }
+        
+        // MFA Selection
+        document.addEventListener('DOMContentLoaded', function() {
+            // MFA option selection
+            document.querySelectorAll('.mfa-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.mfa-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+            
+            // Login form submission
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            
+            // Modal click outside to close
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
